@@ -4,7 +4,7 @@ Every milestone follows the same quality gate: inspect, plan, implement, run, ty
 
 ## Phase 1 — Product foundation
 
-- [ ] Milestone 1: Project foundation and design system
+- [x] Milestone 1: Project foundation and design system
 - [ ] Milestone 2: Admin application shell
 - [ ] Milestone 3: Admin overview dashboard
 

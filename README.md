@@ -100,9 +100,11 @@ Please report vulnerabilities according to [SECURITY.md](SECURITY.md).
 
 ## Current status
 
-**Milestone 1 — Project foundation and design system**
+**Milestone 1 complete — Project foundation and design system**
 
-The next build step is the frontend foundation and admin shell.
+The repository now includes the strict Next.js foundation, responsive admin shell,
+light/dark design tokens, theme persistence, and an initial overview dashboard.
+The next build step is Milestone 2: completing the admin application shell and navigation.
 
 ## Author
 
