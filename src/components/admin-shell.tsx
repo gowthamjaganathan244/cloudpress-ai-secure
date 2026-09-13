@@ -1,76 +1,35 @@
-import {
-  Activity, BookOpenText, Bot, ChevronDown, CircleGauge, FileCheck2,
-  Files, LockKeyhole, Search, Settings, ShieldCheck, Users,
-} from "lucide-react";
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { LockKeyhole, Menu } from "lucide-react";
 import type { ReactNode } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const navigation = [
-  { label: "Overview", icon: CircleGauge, active: true },
-  { label: "Articles", icon: BookOpenText },
-  { label: "Documents", icon: Files },
-  { label: "Approvals", icon: FileCheck2, badge: "8" },
-  { label: "Knowledge", icon: Bot },
-  { label: "Users & roles", icon: Users },
-];
-
-const governance = [
-  { label: "Security", icon: ShieldCheck },
-  { label: "Audit log", icon: Activity },
-  { label: "Settings", icon: Settings },
-];
+import { sections } from "@/config/navigation";
 
 export function AdminShell({ children }: { children: ReactNode }) {
-  return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-mark"><LockKeyhole size={20} /></span>
-          <span><strong>CloudPress</strong><small>AI Secure</small></span>
-        </div>
-
-        <nav aria-label="Primary navigation" className="nav-group">
-          <p className="nav-label">Workspace</p>
-          {navigation.map(({ label, icon: Icon, active, badge }) => (
-            <a className={`nav-item ${active ? "active" : ""}`} href="#" key={label}>
-              <Icon size={18} /><span>{label}</span>
-              {badge ? <span className="nav-badge">{badge}</span> : null}
-            </a>
-          ))}
-        </nav>
-
-        <nav aria-label="Governance navigation" className="nav-group governance-nav">
-          <p className="nav-label">Governance</p>
-          {governance.map(({ label, icon: Icon }) => (
-            <a className="nav-item" href="#" key={label}><Icon size={18} /><span>{label}</span></a>
-          ))}
-        </nav>
-
-        <div className="security-card">
-          <ShieldCheck size={19} />
-          <div><strong>Security healthy</strong><span>All controls operational</span></div>
-        </div>
-      </aside>
-
-      <div className="workspace">
-        <header className="topbar">
-          <label className="search-box">
-            <Search size={18} aria-hidden="true" />
-            <span className="sr-only">Search workspace</span>
-            <input placeholder="Search content, people, or activity…" type="search" />
-            <kbd>⌘ K</kbd>
-          </label>
-          <div className="topbar-actions">
-            <ThemeToggle />
-            <button className="profile-button" type="button">
-              <span className="avatar">GJ</span>
-              <span className="profile-copy"><strong>Gowtham</strong><small>Administrator</small></span>
-              <ChevronDown size={16} />
-            </button>
-          </div>
-        </header>
-        <main className="main-content">{children}</main>
-      </div>
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const current = sections.find(({ slug }) => pathname === "/admin/" + slug);
+  return <div className="app-shell">
+    <a className="skip-link" href="#main-content">Skip to content</a>
+    <aside className="sidebar">
+      <Link className="brand" href="/admin"><span className="brand-mark"><LockKeyhole size={20} /></span><span><strong>CloudPress</strong><small>Admin workspace</small></span></Link>
+      <button className="icon-button menu-button" aria-expanded={open} aria-controls="admin-navigation" onClick={() => setOpen(!open)}><Menu size={20} /><span className="sr-only">Toggle navigation</span></button>
+      <nav id="admin-navigation" aria-label="Admin navigation" className={"nav-group " + (open ? "nav-open" : "")}>
+        <p className="nav-label">Workspace</p>
+        {[{ slug: "", label: "Overview" }, ...sections].map(({ slug, label }) => {
+          const href = "/admin" + (slug ? "/" + slug : "");
+          return <Link key={href} href={href} className={"nav-item " + (pathname === href ? "active" : "")} aria-current={pathname === href ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>;
+        })}
+      </nav>
+      <div className="security-card"><div><strong>Frontend demo</strong><span>Security services not connected</span></div></div>
+    </aside>
+    <div className="workspace">
+      <header className="topbar"><nav aria-label="Breadcrumb"><Link href="/admin">Admin</Link> / {current?.label ?? "Overview"}</nav>
+        <div className="topbar-actions"><ThemeToggle /><details className="account-menu"><summary>Demo administrator</summary><p>Preview identity only. Sign-in and roles arrive in a later milestone.</p></details></div>
+      </header>
+      <main id="main-content" tabIndex={-1} className="main-content"><p className="demo-notice">Demo preview · All metrics and activity are fictional. No live AWS or AI services.</p>{children}</main>
     </div>
-  );
+  </div>;
 }

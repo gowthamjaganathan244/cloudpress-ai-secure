@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ArrowRight, BookOpenText, CheckCircle2, Clock3, FileText,
   Plus, ShieldCheck, Sparkles, TrendingUp,
@@ -21,11 +22,11 @@ export function Dashboard() {
     <div className="dashboard">
       <section className="page-heading">
         <div>
-          <p className="eyebrow">Sunday, 13 September</p>
-          <h1>Good evening, Gowtham.</h1>
+          <p className="eyebrow">Admin overview · Sample workspace</p>
+          <h1>Your workspace at a glance.</h1>
           <p>Here is what needs your attention across the workspace.</p>
         </div>
-        <button className="primary-button" type="button"><Plus size={18} /> New article</button>
+        <Link className="primary-button" href="/admin/articles"><Plus size={18} /> Articles</Link>
       </section>
 
       <section aria-label="Workspace metrics" className="metric-grid">
@@ -42,7 +43,7 @@ export function Dashboard() {
         <section className="panel workflow-panel">
           <div className="panel-heading">
             <div><h2>Approval workflow</h2><p>Content requiring action from your teams</p></div>
-            <a href="#">View all <ArrowRight size={15} /></a>
+            <Link href="/admin/approvals">View all <ArrowRight size={15} /></Link>
           </div>
           <div className="workflow-list">
             {workflow.map((item) => (
@@ -50,7 +51,7 @@ export function Dashboard() {
                 <div className="document-icon"><FileText size={19} /></div>
                 <div className="workflow-copy"><strong>{item.title}</strong><span>{item.owner} · {item.time}</span></div>
                 <span className={`status ${item.tone}`}>{item.state}</span>
-                <button aria-label={`Open ${item.title}`} className="row-action" type="button"><ArrowRight size={17} /></button>
+                <Link aria-label={`View approvals for ${item.title}`} className="row-action" href="/admin/approvals"><ArrowRight size={17} /></Link>
               </article>
             ))}
           </div>
@@ -61,15 +62,15 @@ export function Dashboard() {
           <span className="ai-label">CloudPress AI</span>
           <h2>Turn trusted knowledge into answers.</h2>
           <p>Ask permission-aware questions across your governed workspace.</p>
-          <button className="secondary-button" type="button">Open AI workspace <ArrowRight size={16} /></button>
-          <div className="ai-trust"><CheckCircle2 size={15} /> Guardrails and source citations enabled</div>
+          <Link className="secondary-button" href="/admin/ai">Open AI workspace <ArrowRight size={16} /></Link>
+          <div className="ai-trust"><CheckCircle2 size={15} /> Guardrails and citations planned</div>
         </section>
       </div>
 
       <section className="panel activity-panel">
         <div className="panel-heading">
-          <div><h2>Recent activity</h2><p>Verified events from your workspace</p></div>
-          <span className="live-status"><i /> Live</span>
+          <div><h2>Recent activity</h2><p>Illustrative events — not connected to a backend</p></div>
+          <span className="live-status"><i /> Sample</span>
         </div>
         <div className="activity-row">
           <span className="activity-icon green"><CheckCircle2 size={17} /></span>

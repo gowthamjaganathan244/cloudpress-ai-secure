@@ -107,6 +107,16 @@ light/dark design tokens, theme persistence, and an initial overview dashboard.
 The next build step is Milestone 2: completing the admin application shell and navigation.
 
 ## Author
+## Run locally
+
+See [Local development](docs/LOCAL-DEVELOPMENT.md) for installation and troubleshooting.
+Run `npm ci`, then `npm run dev` and open http://localhost:3000/admin.
+
+Admin navigation now has real routes, active states, a small-screen menu,
+and loading/error/not-found boundaries. Feature routes remain planned placeholders.
+Lint and production build pass. Browser-based visual and interaction QA is still pending.
+
+## Author
 
 **Gowtham Jaganathan**  
 Canberra, Australia
