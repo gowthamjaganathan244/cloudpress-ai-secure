@@ -100,11 +100,48 @@ Please report vulnerabilities according to [SECURITY.md](SECURITY.md).
 
 ## Current status
 
-**Milestone 1 complete — Project foundation and design system**
+**Milestone 2 implemented locally — Admin application shell (ready for review)**
 
-The repository now includes the strict Next.js foundation, responsive admin shell,
-light/dark design tokens, theme persistence, and an initial overview dashboard.
-The next build step is Milestone 2: completing the admin application shell and navigation.
+The application redirects `/` to `/admin`, with a persistent collapsible desktop
+sidebar, tablet/mobile navigation drawer, breadcrumbs, a demo account dropdown,
+and keyboard-accessible **Find a page** navigation search. System, light, and dark
+themes are supported. The overview retains fictional demo data; other admin
+sections are explicitly labelled planned. No authentication or access control is
+implemented. Employee and public portals remain separate future work.
+
+Milestone 3 has not started. See [Milestone 2 handoff](docs/MILESTONE-2.md) for
+changed files, verification, and limitations.
+
+## Run locally
+
+Use Node.js 22 or newer. From the project directory:
+
+```bash
+npm ci
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). Stop the server with `Ctrl+C`.
+The current dashboard uses sample data; cloud services and authentication are planned.
+
+To check the application, run `npm run lint` and `npm run build`.
+To run the production build locally, run `npm run build` followed by `npm start`.
+
+The production build uses Webpack because Turbopack encountered a worker-port
+permission error in the local development environment. The existing Google font
+configuration requires network access on an uncached build.
+
+For repeatable browser checks (with Google Chrome installed):
+
+```bash
+npm run build
+npm run test:e2e
+```
+
+Tests start and stop their own production server on `127.0.0.1:3100`; that port
+must be free. Screenshots and failure traces are saved in ignored `test-results/`.
+Alternatively, run `npx playwright install chromium`, then
+`PW_CHANNEL=chromium npm run test:e2e`.
 
 ## Author
 
