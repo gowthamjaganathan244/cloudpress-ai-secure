@@ -1,76 +1,154 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import {
-  Activity, BookOpenText, Bot, ChevronDown, CircleGauge, FileCheck2,
-  Files, LockKeyhole, Search, Settings, ShieldCheck, Users,
+  LockKeyhole,
+  Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Search,
 } from "lucide-react";
-import type { ReactNode } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const navigation = [
-  { label: "Overview", icon: CircleGauge, active: true },
-  { label: "Articles", icon: BookOpenText },
-  { label: "Documents", icon: Files },
-  { label: "Approvals", icon: FileCheck2, badge: "8" },
-  { label: "Knowledge", icon: Bot },
-  { label: "Users & roles", icon: Users },
-];
-
-const governance = [
-  { label: "Security", icon: ShieldCheck },
-  { label: "Audit log", icon: Activity },
-  { label: "Settings", icon: Settings },
-];
+import { AdminNavigation } from "@/components/admin-navigation";
+import { AccountDropdown } from "@/components/account-dropdown";
+import { PageFinder } from "@/components/page-finder";
+import { Modal } from "@/components/ui/modal";
+import { adminHref, adminPages } from "@/lib/admin-navigation";
+import { savePreference, useSidebarCollapsed } from "@/lib/preferences";
 
 export function AdminShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const collapsed = useSidebarCollapsed();
+  const [overlay, setOverlay] = useState<"navigation" | "finder" | null>(null);
+  const closeOverlay = useCallback(() => setOverlay(null), []);
+  const current = adminPages.find((page) => adminHref(page.slug) === pathname);
+
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        // Do not replace an open dialog: preserve its focus restoration target.
+        if (document.querySelector("dialog[open]")) return;
+        setOverlay("finder");
+      }
+    };
+    const wide = matchMedia("(min-width: 1024px)");
+    const resize = () => {
+      if (wide.matches)
+        setOverlay((value) => (value === "navigation" ? null : value));
+    };
+    window.addEventListener("keydown", shortcut);
+    wide.addEventListener("change", resize);
+    return () => {
+      window.removeEventListener("keydown", shortcut);
+      wide.removeEventListener("change", resize);
+    };
+  }, []);
+
   return (
     <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-mark"><LockKeyhole size={20} /></span>
-          <span><strong>CloudPress</strong><small>AI Secure</small></span>
-        </div>
-
-        <nav aria-label="Primary navigation" className="nav-group">
-          <p className="nav-label">Workspace</p>
-          {navigation.map(({ label, icon: Icon, active, badge }) => (
-            <a className={`nav-item ${active ? "active" : ""}`} href="#" key={label}>
-              <Icon size={18} /><span>{label}</span>
-              {badge ? <span className="nav-badge">{badge}</span> : null}
-            </a>
-          ))}
-        </nav>
-
-        <nav aria-label="Governance navigation" className="nav-group governance-nav">
-          <p className="nav-label">Governance</p>
-          {governance.map(({ label, icon: Icon }) => (
-            <a className="nav-item" href="#" key={label}><Icon size={18} /><span>{label}</span></a>
-          ))}
-        </nav>
-
-        <div className="security-card">
-          <ShieldCheck size={19} />
-          <div><strong>Security healthy</strong><span>All controls operational</span></div>
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+      <aside className="sidebar desktop-sidebar" aria-label="Admin sidebar">
+        <Link
+          href="/admin"
+          className="brand"
+          aria-label="CloudPress admin overview"
+        >
+          <span className="brand-mark">
+            <LockKeyhole size={20} aria-hidden="true" />
+          </span>
+          <span className="brand-copy">
+            <strong>CloudPress</strong>
+            <small>Admin workspace</small>
+          </span>
+        </Link>
+        <AdminNavigation pathname={pathname} />
+        <div className="sidebar-footer">
+          <p className="portal-note">
+            Admin preview
+            <br />
+            <span>Employee and public portals are planned.</span>
+          </p>
+          <button
+            type="button"
+            className="collapse-button"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            onClick={() =>
+              savePreference("sidebar", collapsed ? "expanded" : "collapsed")
+            }
+          >
+            {collapsed ? (
+              <PanelLeftOpen size={18} />
+            ) : (
+              <PanelLeftClose size={18} />
+            )}
+            <span className="nav-text">Collapse sidebar</span>
+          </button>
         </div>
       </aside>
-
       <div className="workspace">
         <header className="topbar">
-          <label className="search-box">
+          <button
+            className="icon-button mobile-menu"
+            type="button"
+            aria-label="Open admin navigation"
+            aria-haspopup="dialog"
+            aria-expanded={overlay === "navigation"}
+            onClick={() => setOverlay("navigation")}
+          >
+            <Menu size={20} />
+          </button>
+          <button
+            className="search-box"
+            type="button"
+            aria-haspopup="dialog"
+            aria-keyshortcuts="Control+k Meta+k"
+            onClick={() => setOverlay("finder")}
+          >
             <Search size={18} aria-hidden="true" />
-            <span className="sr-only">Search workspace</span>
-            <input placeholder="Search content, people, or activity…" type="search" />
-            <kbd>⌘ K</kbd>
-          </label>
+            <span>Find a page</span>
+            <kbd>Ctrl / ⌘ K</kbd>
+          </button>
           <div className="topbar-actions">
             <ThemeToggle />
-            <button className="profile-button" type="button">
-              <span className="avatar">GJ</span>
-              <span className="profile-copy"><strong>Gowtham</strong><small>Administrator</small></span>
-              <ChevronDown size={16} />
-            </button>
+            <AccountDropdown />
           </div>
         </header>
-        <main className="main-content">{children}</main>
+        <main className="main-content" id="main-content" tabIndex={-1}>
+          <div className="page-container">
+            <nav aria-label="Breadcrumb" className="breadcrumbs">
+              <ol>
+                <li>
+                  <Link href="/admin">Admin</Link>
+                </li>
+                <li aria-current="page">
+                  {current?.label ?? "Page not found"}
+                </li>
+              </ol>
+            </nav>
+            {children}
+          </div>
+        </main>
       </div>
+      {overlay === "finder" && <PageFinder onClose={closeOverlay} />}
+      {overlay === "navigation" && (
+        <Modal
+          title="Admin navigation"
+          id="mobile-navigation-title"
+          className="navigation-dialog"
+          onClose={closeOverlay}
+        >
+          <AdminNavigation pathname={pathname} onNavigate={closeOverlay} />
+          <p className="portal-note">
+            Admin preview. Employee and public portals are planned.
+          </p>
+        </Modal>
+      )}
     </div>
   );
 }

@@ -5,10 +5,18 @@ Every milestone follows the same quality gate: inspect, plan, implement, run, ty
 ## Phase 1 — Product foundation
 
 - [x] Milestone 1: Project foundation and design system
-- [ ] Milestone 2: Admin application shell
+- [x] Milestone 2: Admin application shell — implemented locally; awaiting review
 - [ ] Milestone 3: Admin overview dashboard
 
 **Outcome:** coherent architecture, tokens, typography, navigation, accessible themes, reusable components, and a responsive enterprise shell.
+
+Milestone 2 delivers the `/admin` route boundary, desktop sidebar preference,
+tablet/mobile drawer, active links and breadcrumbs, demo account disclosure,
+keyboard page finder, safe system/light/dark preferences, planned-page states,
+and error/not-found/loading fallbacks. Dashboard content remains fictional demo
+data. Chrome interaction tests cover all admin destinations and both themes at
+768, 1024, 1280, 1440, and 1920 pixels. See [the handoff](MILESTONE-2.md) for
+verification details and unverified cases. Milestone 3 remains unstarted.
 
 ## Phase 2 — Core CMS
 
